@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapel Seminar Management System - Admin</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>Chapel Seminar Management System</h1>
+    <nav>
+      <a href="/home">Home</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="/attendance">Attendance</a>
+      <a href="/admin/getEventPage" class="active">Admin</a>
+    </nav>
+  </header>
+
+  <main class="main">
+    <section class="admin">
+      <h2>Admin Panel</h2>
+
+      <h3>Add a New Seminar</h3>
+      <form action="/admin/createEvent" method="post" enctype="application/x-www-form-urlencoded">
+        <label for="seminar-title">Title:</label>
+        <input type="text" id="seminar-title" name="seminar_title" required>
+
+        <label for="seminar-date">Date:</label>
+        <input type="date" id="seminar-date" name="seminar_date" required>
+      
+        <label for="seminar-time">Time:</label>
+        <input type="time" id="seminar-time" name="seminar_time" required>
+
+        <label for="speaker-name">Speaker:</label>
+        <input type="text" id="speaker-name" name="speaker_name" required>
+
+        <button type="submit">Add Seminar</button>
+      </form>
+
+      <h3>
+        <button id="toggle-seminars" style="background-color: #007BFF; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+          View All Events
+        </button>
+      </h3>
+      <h3>
+        <button id="toggle-attendance" style="background-color: #007BFF; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+          View Attendance Records
+        </button>
+      </h3>
+
+      <section class="upcoming-seminars">
+        <h2>Seminars Schedule</h2>
+        <div id="seminar-container"></div>
+      </section>
+
+      <section class="attendance-records">
+        <h2>Attendance Records</h2>
+        <div id="attendance-container"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2024 Babcock University</p>
+  </footer>
+
+  <script>
+    // Handle success or error alerts based on URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('created') && urlParams.get('created') === 'true') {
+      alert('Event created successfully!');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    if (urlParams.has('success') && urlParams.get('success') === 'false') {
+      alert('Something went wrong, please try again.');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    if (urlParams.has('exists') && urlParams.get('exists') === 'true') {
+      alert('Activity already exists!');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    if (urlParams.has('deleted') && urlParams.get('deleted') === 'true') {
+      alert('Event has been deleted!');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Toggle visibility and fetch data for sections
+    let visibilityState = {
+      seminars: false,
+      attendance: false
+    };
+
+    async function toggleSection(section) {
+      const container = document.getElementById(`${section}-container`);
+
+      if (visibilityState[section]) {
+        // If the section is visible, hide it
+        container.innerHTML = '';
+        visibilityState[section] = false;
+      } else {
+        // If the section is not visible, fetch data and display it
+        try {
+          let data = [];
+          if (section === 'seminar') {
+            const response = await fetch('/api/allSeminars');
+            data = await response.json();
+          } else if (section === 'attendance') {
+            const response = await fetch('/api/records');
+            data = await response.json();
+          }
+
+          container.innerHTML = ''; // Clear existing content
+
+          if (data.length > 0) {
+            if (section === 'seminar') {
+              data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'seminar-card';
+                card.innerHTML = `
+                  <h3>${item.title}</h3>
+                  <p>Date: ${new Date(item.date).toLocaleDateString()}</p>
+                  <p>Time: ${item.time.slice(0, 5)}</p>
+                  <p>Speaker: ${item.speaker_name}</p>
+                  <form action="/deleteEvent" method="post" onsubmit="return confirm('Are you sure you want to delete this seminar?');">
+                    <input type="hidden" name="title" value="${item.title}">
+                    <button type="submit" style="background-color: red; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">Delete</button>
+                  </form>
+                `;
+                container.appendChild(card);
+              });
+            } else if (section === 'attendance') {
+              let currentSeminar = '';
+              data.forEach(record => {
+                if (record.seminar_title !== currentSeminar) {
+                  currentSeminar = record.seminar_title;
+                  const seminarHeader = document.createElement('h3');
+                  seminarHeader.textContent = `Seminar: ${currentSeminar}`;
+                  container.appendChild(seminarHeader);
+                }
+
+                const card = document.createElement('div');
+                card.className = 'attendance-card';
+                card.innerHTML = `
+    <p style="color: green;">Student ID: ${record.student_id}</p>
+    <p style="color: orange;">Department: ${record.department}</p>
+    <p style="color: red;">Status: ${record.attendance_status}</p>
+    <hr width="60%" size="2" color="grey">
+`;
+
+                container.appendChild(card);
+              });
+            }
+          } else {
+            container.innerHTML = `<p>No ${section === 'seminar' ? 'seminars' : 'attendance records'} available at the moment.</p>`;
+          }
+
+          visibilityState[section] = true; // Mark the section as visible
+        } catch (error) {
+          console.error(`Error fetching ${section} data:`, error);
+        }
+      }
+    }
+
+    document.getElementById('toggle-seminars').addEventListener('click', () => toggleSection('seminar'));
+    document.getElementById('toggle-attendance').addEventListener('click', () => toggleSection('attendance'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapel Seminar Management</title>
+    <link rel="stylesheet" href="ChapelSeminar.css">
+</head>
+<body>
+    <header>
+        <h1>Front-End Chapel Seminar Management</h1>
+    </header>
+    
+    <main>
+        <section id="seminar-list">
+            <h2>Upcoming Seminars</h2>
+            <ul id="seminars">
+                <li>Entrepreneurship - November 15, 2024</li>
+                <li>Life after University - November 22, 2024</li>
+                <li>Sex Education - November 29, 2024</li>
+            </ul>
+        </section>
+
+        <section id="registration">
+            <h2>Register for a Seminar</h2>
+            <form id="registration-form">
+                <label for="fname">First name:</label>
+                <input type="text" id="firstname" required>
+
+                <label for="lname">Last name:</label>
+                <input type="text" id="lastname" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+
+                <label for="seminar">Select Seminar:</label>
+                <select id="seminar" required>
+                    <option value="Entrepreneurship">Entrepreneurship</option>
+                    <option value="Life after University">Life after University</option>
+                    <option value="Sex Education">Sex Education</option>
+                </select>
+
+                <button type="submit">Register</button>
+            </form>
+            <div id="confirmation-message"></div>
+        </section>
+    </main>
+
+    <script src="ChapleSeminar.js"></script>
+</body>
+</html>

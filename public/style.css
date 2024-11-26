@@ -1,0 +1,111 @@
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+
+header {
+  background-color: #00509E; 
+  color: #fff;
+  padding: 1.5em 0;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2em;
+}
+
+nav a {
+  color: #fff;
+  margin: 0 1em;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #ffdd57; 
+}
+
+
+.main {
+  max-width: 800px;
+  margin: 3em auto;
+  padding: 1em;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.intro {
+  text-align: center;
+  margin-bottom: 2em;
+}
+
+.intro h2 {
+  font-size: 1.8em;
+  color: #333;
+}
+
+.intro p {
+  font-size: 1.1em;
+  color: #666;
+  margin-top: 0.5em;
+}
+
+
+.upcoming-seminars h2 {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+  color: #333;
+  text-align: center;
+}
+
+.seminar-card {
+  background-color: #f9f9f9;
+  padding: 1.5em;
+  margin-bottom: 1.5em;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.seminar-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.seminar-card h3 {
+  font-size: 1.3em;
+  color: #00509E;
+  margin-bottom: 0.5em;
+}
+
+.seminar-card p {
+  font-size: 1em;
+  color: #555;
+  margin: 0.3em 0;
+}
+
+
+footer {
+  background-color: #00509E;
+  color: #fff;
+  text-align: center;
+  padding: 1em;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  font-size: 0.9em;
+}

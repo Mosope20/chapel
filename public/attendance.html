@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapel Seminar Management System - Attendance</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>Chapel Seminar Management System</h1>
+    <nav>
+      <a href="/home">Home</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="/attendance">Attendance</a>
+      <a href="/admin/getEventPage" class="active">Admin</a>
+    </nav>
+  </header>
+
+  <main class="main">
+    <section class="attendance">
+      <h2>Attendance Tracking</h2>
+      <p>Select a seminar to update attendance:</p>
+      
+    
+      <form action="/attendance" method="post">
+        <select id="seminar-select" name="seminar_id" required>
+          <!-- Options dynamically populated from the backend -->
+        </select>
+        <label for="student-id">Student ID:</label>
+        <input type="text" id="student-id" name="student_id" required>
+    
+        <label for="attendance-status">Attendance Status:</label>
+        <select id="attendance-status" name="attendance_status">
+          <option value="present">Present</option>
+          <option value="absent">Absent</option>
+        </select>
+    
+        <label for="department">Department:</label>
+        <select id="department" name="department">
+          <option value="CIS">Computer Information System</option>
+          <option value="SE">Software Engineering</option>
+          <option value="CS">Computer Science</option>
+          <option value="CT">Computer Technology</option>
+          <option value="IT">Information Technology</option>
+        </select>
+    
+        <button type="submit">Update Attendance</button>
+      </form>
+    </section>
+    
+    <script>
+      // Fetch seminars dynamically from the backend
+      async function populateSeminarOptions() {
+        try {
+          const response = await fetch('/api/allSeminars');
+const seminars = await response.json();
+
+// Extract only `seminar_id` and `title` using map
+const simplifiedSeminars = seminars.map(seminar => ({
+  seminar_id: seminar.seminar_id,
+  title: seminar.title
+}));
+
+// Populate the dropdown
+const seminarSelect = document.getElementById('seminar-select');
+simplifiedSeminars.forEach(seminar => {
+  const option = document.createElement('option');
+  option.value = seminar.seminar_id; // seminar_id
+  option.textContent = seminar.title; // Title only
+  seminarSelect.appendChild(option);
+   });
+   
+   const urlParams = new URLSearchParams(window.location.search);
+   if (urlParams.has('success') && urlParams.get('success') === 'true') {
+        alert('Attendance has been recorded');
+        // Optionally, clean up the URL to remove the query parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (urlParams.has('success') && urlParams.get('success') === 'false') {
+        alert('Something went wrong, try again!');
+        // Optionally, clean up the URL to remove the query parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    if (urlParams.has('exists') && urlParams.get('exists') === 'true') {
+        alert('You have been marked present for this seminar already!');
+        // Optionally, clean up the URL to remove the query parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+        } catch (error) {
+          console.error("Error fetching seminars:", error);
+        }
+      }
+    
+      // Populate seminars on page load
+      window.onload = populateSeminarOptions;
+    </script>
+    
